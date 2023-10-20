@@ -8,46 +8,46 @@ RSAbstractRenderTree defines 2 methods to search shapes.
 subclasses of this tree should override also Collection abstract methods
 "
 Class {
-	#name : 'RSShapeCollection',
+	#name : 'RTAbstractCollection',
 	#superclass : 'Collection',
 	#category : 'RTree',
 	#package : 'RTree'
 }
 
 { #category : 'examples' }
-RSShapeCollection class >> exampleList [
+RTAbstractCollection class >> exampleList [
 	"in the inspector add and remove shapes"
-	^ StInspector openOn: RSSequenceableCollection new.
+	^ StInspectorPresenter openOn: RTSequenceableCollection new.
 ]
 
 { #category : 'examples' }
-RSShapeCollection class >> exampleRTree [
+RTAbstractCollection class >> exampleRTree [
 	"this has normal method collections with some new more"
-	^ StInspector openOn: RSRTreeShapeCollection new.
+	^ StInspectorPresenter openOn: RTreeCollection new.
 ]
 
 { #category : 'adding' }
-RSShapeCollection >> add: aShape before: otherShape [
+RTAbstractCollection >> add: aShape before: otherShape [
 	^ self subclassResponsibility
 ]
 
 { #category : 'adding' }
-RSShapeCollection >> bulkLoad: aCollectionOfShapes [
+RTAbstractCollection >> bulkLoad: aCollectionOfShapes [
 	self addAll: aCollectionOfShapes
 ]
 
 { #category : 'shapes - ordering' }
-RSShapeCollection >> pushBack: aShape [
+RTAbstractCollection >> pushBack: aShape [
 	self subclassResponsibility
 ]
 
 { #category : 'shapes - ordering' }
-RSShapeCollection >> pushFront: aShape [
+RTAbstractCollection >> pushFront: aShape [
 	self subclassResponsibility
 ]
 
 { #category : 'finding/searching' }
-RSShapeCollection >> shapeAtPoint: aPoint [
+RTAbstractCollection >> shapeAtPoint: aPoint [
 	| result |
 	result := self shapesAtPoint: aPoint.
 	result ifEmpty: [ ^ nil ].
@@ -55,17 +55,17 @@ RSShapeCollection >> shapeAtPoint: aPoint [
 ]
 
 { #category : 'finding/searching' }
-RSShapeCollection >> shapesAtPoint: position [
+RTAbstractCollection >> shapesAtPoint: position [
 
 	^ self subclassResponsibility
 ]
 
 { #category : 'finding/searching' }
-RSShapeCollection >> shapesAtRectangle: aRectangle [
+RTAbstractCollection >> shapesAtRectangle: aRectangle [
 	^ self subclassResponsibility
 ]
 
 { #category : 'finding/searching' }
-RSShapeCollection >> updateShape: aShape [
+RTAbstractCollection >> updateShape: aShape [
 	^ self subclassResponsibility
 ]

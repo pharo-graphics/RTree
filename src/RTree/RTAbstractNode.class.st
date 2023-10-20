@@ -2,74 +2,74 @@
 based on nil pattern
 "
 Class {
-	#name : 'RSAbstractRNode',
-	#superclass : 'RSObject',
+	#name : 'RTAbstractNode',
+	#superclass : 'Object',
 	#category : 'RTree',
 	#package : 'RTree'
 }
 
 { #category : 'visiting' }
-RSAbstractRNode >> accept: visitor [
+RTAbstractNode >> accept: visitor [
 ]
 
 { #category : 'adding' }
-RSAbstractRNode >> addChild: newObject [
+RTAbstractNode >> addChild: newObject [
 	^ self subclassResponsibility
 ]
 
 { #category : 'public' }
-RSAbstractRNode >> computeHeight [
+RTAbstractNode >> computeHeight [
 	^ 0
 ]
 
 { #category : 'enumerating' }
-RSAbstractRNode >> do: aBlock [
+RTAbstractNode >> do: aBlock [
 ]
 
 { #category : 'accessing' }
-RSAbstractRNode >> height [
+RTAbstractNode >> height [
 	^ 0
 ]
 
 { #category : 'testing' }
-RSAbstractRNode >> isBalanced [
+RTAbstractNode >> isBalanced [
 	^ true
 ]
 
 { #category : 'testing' }
-RSAbstractRNode >> isEmpty [
+RTAbstractNode >> isEmpty [
 	^ true
 ]
 
 { #category : 'testing' }
-RSAbstractRNode >> isNilNode [
+RTAbstractNode >> isNilNode [
 	^ false
 ]
 
 { #category : 'testing' }
-RSAbstractRNode >> isTotalBalanced [
+RTAbstractNode >> isTotalBalanced [
 	^ true
 ]
 
 { #category : 'finding/searching' }
-RSAbstractRNode >> nodesIntersetcsRectangle: aRectangle list: list [
+RTAbstractNode >> nodesIntersetcsRectangle: aRectangle list: list [
 ]
 
 { #category : 'finding/searching' }
-RSAbstractRNode >> nodesWithPoint: aPoint list: list [
+RTAbstractNode >> nodesWithPoint: aPoint list: list [
 ]
 
 { #category : 'accessing' }
-RSAbstractRNode >> rectangle [
+RTAbstractNode >> rectangle [
 	^ 0@0 corner: 0@0
 ]
 
 { #category : 'finding/searching' }
-RSAbstractRNode >> searchPath: anObject [
+RTAbstractNode >> searchPath: anObject [
 	^ #()
 ]
 
 { #category : 'accessing - children' }
-RSAbstractRNode >> withAllChildren [
+RTAbstractNode >> withAllChildren [
 	^ #()
 ]

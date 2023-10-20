@@ -2,8 +2,8 @@
 Visitor that works with `RSRNode`
 "
 Class {
-	#name : 'RSRNodeVisitor',
-	#superclass : 'RSObject',
+	#name : 'RTNodeVisitor',
+	#superclass : 'Object',
 	#instVars : [
 		'block'
 	],
@@ -12,24 +12,24 @@ Class {
 }
 
 { #category : 'instance creation' }
-RSRNodeVisitor class >> on: aBlock [
+RTNodeVisitor class >> on: aBlock [
 	^ self basicNew
 		block: aBlock;
 		yourself
 ]
 
 { #category : 'accessing' }
-RSRNodeVisitor >> block [
+RTNodeVisitor >> block [
 	^ block
 ]
 
 { #category : 'accessing' }
-RSRNodeVisitor >> block: aBlock [
+RTNodeVisitor >> block: aBlock [
 	block := aBlock
 ]
 
 { #category : 'visiting' }
-RSRNodeVisitor >> visitNode: aNode [
+RTNodeVisitor >> visitNode: aNode [
 	block value: aNode.
 	aNode childrenDo: [ :child | child accept: self ]
 ]

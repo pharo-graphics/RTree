@@ -11,8 +11,8 @@ The tree is balanced, then it does not have the order for the elements. User sho
 Use the inspector to visualize the RTree
 "
 Class {
-	#name : 'RSRTreeShapeCollection',
-	#superclass : 'RSShapeCollection',
+	#name : 'RTreeCollection',
+	#superclass : 'RTAbstractCollection',
 	#instVars : [
 		'root'
 	],
@@ -21,23 +21,23 @@ Class {
 }
 
 { #category : 'visiting' }
-RSRTreeShapeCollection >> accept: visitor [
+RTreeCollection >> accept: visitor [
 	root accept: visitor
 ]
 
 { #category : 'adding' }
-RSRTreeShapeCollection >> add: newObject [
+RTreeCollection >> add: newObject [
 	root := root addChild: newObject.
 	^ newObject
 ]
 
 { #category : 'adding' }
-RSRTreeShapeCollection >> add: aShape before: otherShape [
+RTreeCollection >> add: aShape before: otherShape [
 	"do nothing"
 ]
 
 { #category : 'private - removing' }
-RSRTreeShapeCollection >> balanceRemovedPath: path [
+RTreeCollection >> balanceRemovedPath: path [
 	"| times |
 	times := 0.
 	self haltIf: path last value contents model = 53."
@@ -63,58 +63,58 @@ RSRTreeShapeCollection >> balanceRemovedPath: path [
 ]
 
 { #category : 'enumerating' }
-RSRTreeShapeCollection >> do: aBlock [
+RTreeCollection >> do: aBlock [
 	root do: aBlock
 ]
 
 { #category : 'accessing' }
-RSRTreeShapeCollection >> height [
+RTreeCollection >> height [
 	^ root height
 ]
 
 { #category : 'initialization' }
-RSRTreeShapeCollection >> initialize [
+RTreeCollection >> initialize [
 	super initialize.
-	root := RSRNilNode new
+	root := RTNilNode new
 ]
 
 { #category : 'testing' }
-RSRTreeShapeCollection >> isBalanced [
+RTreeCollection >> isBalanced [
 	^ root isBalanced
 ]
 
 { #category : 'testing' }
-RSRTreeShapeCollection >> isEmpty [
+RTreeCollection >> isEmpty [
 	^ root isEmpty
 ]
 
 { #category : 'testing' }
-RSRTreeShapeCollection >> isTotalBalanced [
+RTreeCollection >> isTotalBalanced [
 	^ root isTotalBalanced
 ]
 
 { #category : 'shapes - ordering' }
-RSRTreeShapeCollection >> pushBack: aShape [
+RTreeCollection >> pushBack: aShape [
 	"no need it shape contains its own order"
 ]
 
 { #category : 'shapes - ordering' }
-RSRTreeShapeCollection >> pushFront: aShape [
+RTreeCollection >> pushFront: aShape [
 	"no need it aShape contains its own order with aShape shapeIndex"
 ]
 
 { #category : 'accessing' }
-RSRTreeShapeCollection >> rectangle [
+RTreeCollection >> rectangle [
 	^ root rectangle
 ]
 
 { #category : 'removing' }
-RSRTreeShapeCollection >> remove: oldObject ifAbsent: anExceptionBlock [
+RTreeCollection >> remove: oldObject ifAbsent: anExceptionBlock [
 	| path |
 	path := root searchPath: oldObject.
 	path ifEmpty: [ ^ anExceptionBlock value ].
 	path size = 1 ifTrue: [
-		root := RSRNilNode new.
+		root := RTNilNode new.
 	] ifFalse: [
 		self removeLastNodeInPath: path.
 	].
@@ -123,7 +123,7 @@ RSRTreeShapeCollection >> remove: oldObject ifAbsent: anExceptionBlock [
 ]
 
 { #category : 'private - removing' }
-RSRTreeShapeCollection >> removeLastNodeInPath: path [
+RTreeCollection >> removeLastNodeInPath: path [
 	| last parent isRight brother |
 	last := path last.
 	parent := path nextToLast value.
@@ -137,18 +137,18 @@ RSRTreeShapeCollection >> removeLastNodeInPath: path [
 ]
 
 { #category : 'accessing' }
-RSRTreeShapeCollection >> root [
+RTreeCollection >> root [
 	^ root
 ]
 
 { #category : 'finding/searching' }
-RSRTreeShapeCollection >> shapesAtPoint: aPoint [
+RTreeCollection >> shapesAtPoint: aPoint [
 
 	| res |
 	"very important to preserv the drawing order"
-	res := RSGroup new.
+	res := OrderedCollection new.
 	root nodesWithPoint: aPoint list: res.
-	res := res collect: [ :s | s -> s indexesArray ].
+	res := res collect: [ :s | s -> s indexesFromRoot ].
 
 	self sortResultList: res.
 
@@ -156,16 +156,16 @@ RSRTreeShapeCollection >> shapesAtPoint: aPoint [
 ]
 
 { #category : 'finding/searching' }
-RSRTreeShapeCollection >> shapesAtRectangle: aRectangle [
+RTreeCollection >> shapesAtRectangle: aRectangle [
 	| res |
-	res := RSGroup new.
+	res := OrderedCollection new.
 	root nodesIntersetcsRectangle: aRectangle list: res.
 	res sort: [:a :b | a shapeIndex < b shapeIndex ].
 	^ res
 ]
 
 { #category : 'public' }
-RSRTreeShapeCollection >> shouldSwap: anAssociation and: anAssociation2 [ 
+RTreeCollection >> shouldSwap: anAssociation and: anAssociation2 [ 
 	
 	| v1 v2 size|
 	v1 := anAssociation value.
@@ -185,7 +185,7 @@ RSRTreeShapeCollection >> shouldSwap: anAssociation and: anAssociation2 [
 ]
 
 { #category : 'public' }
-RSRTreeShapeCollection >> sortResultList: aCollection [
+RTreeCollection >> sortResultList: aCollection [
 
 	aCollection sort: [ :a :b | 
 		
@@ -194,8 +194,9 @@ RSRTreeShapeCollection >> sortResultList: aCollection [
 ]
 
 { #category : 'finding/searching' }
-RSRTreeShapeCollection >> updateShape: aShape [
+RTreeCollection >> updateShape: aShape [
+
 	self remove: aShape.
-	aShape encompassingRectangle: nil.
+	aShape resetEncompassingRectangle.
 	self add: aShape
 ]

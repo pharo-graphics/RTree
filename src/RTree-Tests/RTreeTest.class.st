@@ -1,5 +1,5 @@
 Class {
-	#name : 'RSRTreeTest',
+	#name : 'RTreeTest',
 	#superclass : 'RSTest',
 	#instVars : [
 		'tree'
@@ -9,12 +9,12 @@ Class {
 }
 
 { #category : 'accessing' }
-RSRTreeTest >> bigTree [
+RTreeTest >> bigTree [
 	^ self createTreeWith: 100
 ]
 
 { #category : 'accessing' }
-RSRTreeTest >> createTreeWith: aNumber [
+RTreeTest >> createTreeWith: aNumber [
 	| random |
 	"do not modify this method"
 	tree := self emptyTree.
@@ -33,29 +33,29 @@ RSRTreeTest >> createTreeWith: aNumber [
 ]
 
 { #category : 'tests' }
-RSRTreeTest >> emptyTree [
-	^ RSRTreeShapeCollection new
+RTreeTest >> emptyTree [
+	^ RTreeCollection new
 ]
 
 { #category : 'accessing' }
-RSRTreeTest >> leafs [
+RTreeTest >> leafs [
 	^ tree root withAllChildren select: [ :node | node isLeaf ]
 ]
 
 { #category : 'running' }
-RSRTreeTest >> setUp [
+RTreeTest >> setUp [
 	super setUp.
 
 	tree := self emptyTree
 ]
 
 { #category : 'tests - adding' }
-RSRTreeTest >> testAddNil [
+RTreeTest >> testAddNil [
 	self should: [tree add: nil] raise: Error
 ]
 
 { #category : 'tests - adding' }
-RSRTreeTest >> testAllChildren [
+RTreeTest >> testAllChildren [
 	| list |
 	list := tree root withAllChildren.
 	self assert: list isEmpty.
@@ -63,7 +63,7 @@ RSRTreeTest >> testAllChildren [
 	tree add: RSBox new.
 	list := tree root withAllChildren.
 	self assert: list size equals: 1.
-	self assert: (list allSatisfy: [:each | each class = RSRNode ]) .
+	self assert: (list allSatisfy: [:each | each class = RTNode ]) .
 
 	tree add: (RSBox new position: 10@10).
 	list := tree root withAllChildren.
@@ -71,7 +71,7 @@ RSRTreeTest >> testAllChildren [
 ]
 
 { #category : 'tests' }
-RSRTreeTest >> testBalanced [
+RTreeTest >> testBalanced [
 	1 to: 10 do: [ :each | | box |
 		box := RSBox new.
 		box size: 10.
@@ -83,29 +83,7 @@ RSRTreeTest >> testBalanced [
 ]
 
 { #category : 'tests' }
-RSRTreeTest >> testContainsPointInRTree [
-	| canvas collection box shape position |
-	canvas := RSCanvas new.
-	canvas useRTree.
-	position := 1000 asPoint.
-	box := RSBox new
-		size: 100 asPoint;
-		position: position;
-		yourself.
-	collection := canvas shapeCollection.
-	canvas add: box.
-	self assert: collection notEmpty.
-	shape := canvas shapeWithActionForPosition: position.
-	self assert: shape isNil.
-	shape := collection shapeAtPoint: position.
-	self assert: shape equals: box.
-	box @ RSDraggable.
-	shape := canvas shapeWithActionForPosition: position.
-	self assert: shape equals: box
-]
-
-{ #category : 'tests' }
-RSRTreeTest >> testHeight [
+RTreeTest >> testHeight [
 	| b1 b2 b3 b4 |
 	b1 := RSBox new size: 10.
 	b2 := RSBox new size: 30; position: 30@30.
@@ -123,7 +101,7 @@ RSRTreeTest >> testHeight [
 ]
 
 { #category : 'tests' }
-RSRTreeTest >> testIsBalanced [
+RTreeTest >> testIsBalanced [
 	| boxes |
 	self assert: tree isBalanced.
 	boxes := (1 to: 10) collect: [ :i | RSBox new size: 10. ].
@@ -134,7 +112,7 @@ RSRTreeTest >> testIsBalanced [
 ]
 
 { #category : 'tests - adding' }
-RSRTreeTest >> testOneElement [
+RTreeTest >> testOneElement [
 	self assert: tree isEmpty.
 	tree add: (RSBox new size: 10).
 	self deny: tree isEmpty.
@@ -143,7 +121,7 @@ RSRTreeTest >> testOneElement [
 ]
 
 { #category : 'tests' }
-RSRTreeTest >> testOneElementContains [
+RTreeTest >> testOneElementContains [
 	| result |
 	tree add: (RSBox new size: 10).
 
@@ -154,7 +132,7 @@ RSRTreeTest >> testOneElementContains [
 ]
 
 { #category : 'tests' }
-RSRTreeTest >> testOneElementRectangle [
+RTreeTest >> testOneElementRectangle [
 	| box |
 	box := RSBox new size: 10.
 	tree add: box.
@@ -162,7 +140,7 @@ RSRTreeTest >> testOneElementRectangle [
 ]
 
 { #category : 'tests - removing' }
-RSRTreeTest >> testRemoveLeaf1 [
+RTreeTest >> testRemoveLeaf1 [
 	| leafs size shapes shape |
 	tree := self tree.
 
@@ -183,7 +161,7 @@ RSRTreeTest >> testRemoveLeaf1 [
 ]
 
 { #category : 'tests - removing' }
-RSRTreeTest >> testRemoveLeaf2 [
+RTreeTest >> testRemoveLeaf2 [
 	| leafs shapes shape size |
 	tree := self tree.
 	size := tree size.
@@ -198,7 +176,7 @@ RSRTreeTest >> testRemoveLeaf2 [
 ]
 
 { #category : 'tests - removing' }
-RSRTreeTest >> testRemoveLeaf3 [
+RTreeTest >> testRemoveLeaf3 [
 	| leafs shapes random toRemove size |
 	tree := self bigTree.
 	size := tree size.
@@ -222,7 +200,7 @@ RSRTreeTest >> testRemoveLeaf3 [
 ]
 
 { #category : 'tests - removing' }
-RSRTreeTest >> testRemoveRootChildren [
+RTreeTest >> testRemoveRootChildren [
 	| box |
 	tree addAll: { box := RSBox new size: 10. }.
 	tree remove: box.
@@ -230,7 +208,7 @@ RSRTreeTest >> testRemoveRootChildren [
 ]
 
 { #category : 'tests - removing' }
-RSRTreeTest >> testRemoveZero [
+RTreeTest >> testRemoveZero [
 	| value |
 	value := false.
 	tree remove: RSBox new ifAbsent: [ value := true ].
@@ -238,7 +216,7 @@ RSRTreeTest >> testRemoveZero [
 ]
 
 { #category : 'tests' }
-RSRTreeTest >> testSearchPath1 [
+RTreeTest >> testSearchPath1 [
 	| path |
 	tree := self emptyTree.
 	path := tree root searchPath: (RSBox new).
@@ -246,7 +224,7 @@ RSRTreeTest >> testSearchPath1 [
 ]
 
 { #category : 'tests' }
-RSRTreeTest >> testSearchPath2 [
+RTreeTest >> testSearchPath2 [
 	| path shape |
 	tree := self emptyTree.
 	tree add: (shape := RSBox new model: 1).
@@ -255,7 +233,7 @@ RSRTreeTest >> testSearchPath2 [
 ]
 
 { #category : 'tests' }
-RSRTreeTest >> testSearchPath3 [
+RTreeTest >> testSearchPath3 [
 	| nodes path shapes |
 	tree := self tree.
 	"tree inspect"
@@ -272,18 +250,15 @@ RSRTreeTest >> testSearchPath3 [
 ]
 
 { #category : 'tests' }
-RSRTreeTest >> testSeriousBalance [
-	| random canvas |
+RTreeTest >> testSeriousBalance [
+	| random |
 	random := Random new.
 	random seed: 777.
-	canvas := RSCanvas new.
 	1 to: 100 do: [ :each | | box |
-		box := RSBox new.
+		box := RTreeBox new.
 		box size: 10.
 		box model: each.
-		box popup.
 		box position: (random next @ random next) * 1000.
-		canvas add: box.
 
 		tree add: box.
 		self assert: tree height equals: tree root computeHeight.
@@ -292,7 +267,7 @@ RSRTreeTest >> testSeriousBalance [
 ]
 
 { #category : 'tests' }
-RSRTreeTest >> testSortResultArray [
+RTreeTest >> testSortResultArray [
 
 	| shapes a b c d e |
 	shapes := { 
@@ -301,7 +276,7 @@ RSRTreeTest >> testSortResultArray [
 		          ((c := RSBox model: 'c') -> { 3. 1 }).
 		          ((d := RSBox model: 'd') -> { 1. 4 }).
 		          ((e := RSBox model: 'e') -> { 1. 4. 1 }) }.
-	tree := RSRTreeShapeCollection new.
+	tree := RTreeCollection new.
 	tree sortResultList: shapes.
 
 	self assert: (shapes collect: #key) equals: { 
@@ -313,7 +288,7 @@ RSRTreeTest >> testSortResultArray [
 ]
 
 { #category : 'tests - adding' }
-RSRTreeTest >> testThreeElements [
+RTreeTest >> testThreeElements [
 	| b1 b2 b3 |
 	b1 := RSBox new size: 10.
 	b2 := RSBox new size: 30; position: 30@30.
@@ -327,7 +302,7 @@ RSRTreeTest >> testThreeElements [
 ]
 
 { #category : 'tests' }
-RSRTreeTest >> testThreeElementsContains [
+RTreeTest >> testThreeElementsContains [
 	| b1 b2 b3 result |
 	b1 := RSBox new size: 10; shapeIndex: 2.
 	b2 := RSBox new size: 30; position: 30@30; shapeIndex: 1.
@@ -355,7 +330,7 @@ RSRTreeTest >> testThreeElementsContains [
 ]
 
 { #category : 'tests - adding' }
-RSRTreeTest >> testTwoElements [
+RTreeTest >> testTwoElements [
 	| b1 b2 |
 	b1 := RSBox new size: 10.
 	b2 := RSBox new size: 30; position: 30@30.
@@ -368,7 +343,7 @@ RSRTreeTest >> testTwoElements [
 ]
 
 { #category : 'tests' }
-RSRTreeTest >> testTwoElementsContains [
+RTreeTest >> testTwoElementsContains [
 	| b1 b2 result |
 	b1 := RSBox new size: 10; shapeIndex: 1.
 	b2 := RSBox new size: 30; position: 30@30; shapeIndex: 2.
@@ -387,7 +362,7 @@ RSRTreeTest >> testTwoElementsContains [
 ]
 
 { #category : 'tests - adding' }
-RSRTreeTest >> testTwoElementsRectangle [
+RTreeTest >> testTwoElementsRectangle [
 	| b1 b2 group |
 	b1 := RSBox new size: 10.
 	b2 := RSBox new size: 30; position: 30@30.
@@ -398,33 +373,33 @@ RSRTreeTest >> testTwoElementsRectangle [
 ]
 
 { #category : 'tests' }
-RSRTreeTest >> testUpdateExtentShouldUpdateTreeRectangle [
-	| canvas collection box oldExtent newExtent |
-	canvas := RSCanvas new.
-	canvas useRTree.
-	collection := canvas shapeCollection.
+RTreeTest >> testUpdateExtentShouldUpdateTreeRectangle [
+	| collection box oldExtent newExtent |
+	collection := self emptyTree.
 	oldExtent := 10@10.
 	newExtent := 20@20.
-	box := RSBox new.
+	box := RTreeBox new.
 	box extent: oldExtent.
-	canvas add: box.
+	collection add: box.
 	
 	self assert: collection root rectangle equals: box encompassingRectangle.
+	
 	box extent: newExtent.
+	collection updateShape: box.
+	
 	self assert: box encompassingRectangle extent equals: newExtent.
 	self assert: collection root rectangle equals: box encompassingRectangle.
-	
 ]
 
 { #category : 'tests' }
-RSRTreeTest >> testZeroElement [
+RTreeTest >> testZeroElement [
 	self assert: tree isEmpty.
 	self assert: tree root isNilNode.
 	self assert: tree size equals: 0
 ]
 
 { #category : 'tests' }
-RSRTreeTest >> testZeroElementContains [
+RTreeTest >> testZeroElementContains [
 	| result |
 	result := tree shapesAtPoint: 0@0.
 	self assert: result isEmpty.
@@ -433,11 +408,11 @@ RSRTreeTest >> testZeroElementContains [
 ]
 
 { #category : 'tests' }
-RSRTreeTest >> testZeroElementRectangle [
+RTreeTest >> testZeroElementRectangle [
 	self assert: tree rectangle equals: (0@0 corner: 0@0)
 ]
 
 { #category : 'accessing' }
-RSRTreeTest >> tree [
+RTreeTest >> tree [
 	^ self createTreeWith: 10
 ]

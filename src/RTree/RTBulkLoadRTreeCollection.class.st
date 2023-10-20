@@ -7,15 +7,15 @@ users should provide a (2 raisedTo: n) number of nodes to compute the tree.
 rembember a balance tree offers a better search experience 
 "
 Class {
-	#name : 'RSBulkLoadRTreeCollection',
-	#superclass : 'RSRTreeShapeCollection',
+	#name : 'RTBulkLoadRTreeCollection',
+	#superclass : 'RTreeCollection',
 	#category : 'RTree',
 	#package : 'RTree'
 }
 
 { #category : 'adding' }
-RSBulkLoadRTreeCollection >> bulkLoad: aCollection [
+RTBulkLoadRTreeCollection >> bulkLoad: aCollection [
 	aCollection ifEmpty: [ ^ self ].
-	root := RSRNode new.
+	root := RTNode new.
 	root bulkLoad: aCollection from: 1 to: aCollection size
 ]
