@@ -11,14 +11,15 @@ Class {
 		'rectangle',
 		'height'
 	],
-	#category : 'RTree',
-	#package : 'RTree'
+	#category : 'RTree-Nodes',
+	#package : 'RTree',
+	#tag : 'Nodes'
 }
 
 { #category : 'instance creation' }
-RTNode class >> new: anObject [
+RTNode class >> new: anRTEntry [
 	^ self basicNew
-		fromShape: anObject;
+		fromEntry: anRTEntry;
 		yourself
 ]
 
@@ -27,29 +28,29 @@ RTNode >> accept: visitor [
 	visitor visitNode: self
 ]
 
-{ #category : 'adding' }
-RTNode >> add: anObject path: list [
-
+{ #category : 'private' }
+RTNode >> add: anRTEntry path: list [
+	"adds the entry but it loose the balance"
 	self isLeaf ifTrue: [
 		left := self class new: self contents.
-		right := self class new: anObject.
+		right := self class new: anRTEntry.
 		height := 2.
 		contents := nil.
 	]ifFalse: [ | leastEnlargementChild |
-		leastEnlargementChild := self leastEnlargementChild: anObject.
+		leastEnlargementChild := self leastEnlargementChild: anRTEntry.
 		list add: (right = leastEnlargementChild) -> leastEnlargementChild.
-		leastEnlargementChild add: anObject path: list.
+		leastEnlargementChild add: anRTEntry path: list.
 		height := (left height max: right height) + 1.
 	].
 	rectangle := Rectangle merging: {left rectangle. right rectangle}
 ]
 
 { #category : 'adding' }
-RTNode >> addChild: newObject [
+RTNode >> addChild: anRTEntry [
 	| path |
 	path := OrderedCollection with: self.
-	self add: newObject path: path.
-	self checkPath: path.
+	self add: anRTEntry path: path.
+	self ensureBalancePath: path.
 	^ self
 ]
 
@@ -65,61 +66,22 @@ RTNode >> balanceZ: z y: y x: x [
 		^ self llrotationZ: c y: b x: a ].
 	(y key not and: [ x key ]) ifTrue: [
 		^ self lrrotationZ: c y: b x: a ].
-	"(y key and: [ x key not ])"
 	^ self rlrotationZ: c y: b x: a.
-	"self notYetImplemented."
-]
-
-{ #category : 'adding' }
-RTNode >> bulkLoad: aCollection from: a to: b [
-	"a and b are indeces, used to copy part of the boxes"
-	b < a ifTrue: [ ^ self error: 'should not' ].
-	a = b ifTrue: [
-		contents := aCollection at: a.
-		rectangle := contents encompassingRectangle.
-	] ifFalse: [ | mid |
-		rectangle := Rectangle merging: ((a to: b) collect: [:i |
-			(aCollection at: i) encompassingRectangle ]).
-		mid := (a+b/2) asInteger.
-		left := self class new.
-		left bulkLoad: aCollection from: a to: mid.
-		right := self class new.
-		right bulkLoad: aCollection from: mid + 1 to: b.
-	]
-]
-
-{ #category : 'private' }
-RTNode >> checkPath: aCollection [
-	| recomputeHeight |
-	aCollection size < 3 ifTrue: [ ^ self ].
-	recomputeHeight := false.
-	(1 to: aCollection size - 2) reverseDo: [ :index |
-		| assoc |
-		assoc := aCollection at: index.
-		recomputeHeight ifTrue: [
-			assoc value height: (assoc value left height max: assoc value right height)+1
-		] ifFalse: [
-			(assoc value isBalanced) ifFalse: [ | z y x |
-				z := aCollection at: index.
-				y := aCollection at: index + 1.
-				x := aCollection at: index + 2.
-				recomputeHeight := true.
-				self balanceZ: z y: y x: x.
-			]
-		]
-	].
-	"recomputeHeight ifTrue: [ root computeHeight ]"
 ]
 
 { #category : 'accessing' }
 RTNode >> children [
-	^ {left. right} copyWithout: nil
+	^ self isLeaf
+		ifTrue: [ #() ]
+		ifFalse: [ { left. right } ]
+
 ]
 
 { #category : 'enumerating' }
 RTNode >> childrenDo: aBlock [
-	left ifNotNil: aBlock.
-	right ifNotNil: aBlock
+	self isLeaf ifTrue: [ ^ self ].
+	aBlock value: left.
+	aBlock value: right
 ]
 
 { #category : 'enumerating' }
@@ -132,6 +94,7 @@ RTNode >> collect: aFullBlockClosure [
 
 { #category : 'public' }
 RTNode >> computeHeight [
+	"do not use it"
 	height := self isLeaf
 		ifTrue: [ 1 ]
 		ifFalse: [ (left computeHeight max: right computeHeight) + 1 ].
@@ -163,6 +126,36 @@ RTNode >> do: aBlock [
 			 ]
 ]
 
+{ #category : 'private' }
+RTNode >> ensureBalancePath: aCollection [
+	| recomputeHeight |
+	"ensure the balance of the tree"
+	aCollection size < 3 ifTrue: [ ^ self ].
+	recomputeHeight := false.
+	(1 to: aCollection size - 2) reverseDo: [ :index |
+		| assoc |
+		assoc := aCollection at: index.
+		recomputeHeight ifTrue: [
+			assoc value height: (assoc value left height max: assoc value right height)+1
+		] ifFalse: [
+			(assoc value isBalanced) ifFalse: [ | z y x |
+				z := aCollection at: index.
+				y := aCollection at: index + 1.
+				x := aCollection at: index + 2.
+				recomputeHeight := true.
+				self balanceZ: z y: y x: x.
+			]
+		]
+	].
+]
+
+{ #category : 'private' }
+RTNode >> fromEntry: anRTEntry [
+	contents := anRTEntry.
+	height := 1.
+	rectangle := anRTEntry encompassingRectangle
+]
+
 { #category : 'initialization' }
 RTNode >> fromNode: aNode [
 	contents := aNode contents.
@@ -170,13 +163,6 @@ RTNode >> fromNode: aNode [
 	right := aNode right.
 	rectangle := aNode rectangle.
 	height := aNode height
-]
-
-{ #category : 'private' }
-RTNode >> fromShape: aRSShape [
-	contents := aRSShape.
-	height := 1.
-	rectangle := aRSShape encompassingRectangle
 ]
 
 { #category : 'accessing' }
@@ -202,17 +188,12 @@ RTNode >> inspectionTree: aBuilder [
 
 { #category : 'testing' }
 RTNode >> isBalanced [
-	^ self isLeaf or: [ (left height - right height) abs <= 1  ]
+	^ self isLeaf or: [ (left height - right height) abs <= 1 ]
 ]
 
 { #category : 'testing' }
 RTNode >> isEmpty [
 	^ false
-]
-
-{ #category : 'testing' }
-RTNode >> isInvalid [
-	^ self isLeaf and: [ self contents isNil ]
 ]
 
 { #category : 'testing' }
@@ -222,16 +203,18 @@ RTNode >> isLeaf [
 
 { #category : 'testing' }
 RTNode >> isTotalBalanced [
+	"do not use it, only for debugging"
 	^ self isBalanced
 		and: [ (left isNil or: [ left isTotalBalanced ])
 			and: [ right isNil or: [ right isTotalBalanced ] ] ]
 ]
 
 { #category : 'private' }
-RTNode >> leastEnlargementChild: anRSShape [
+RTNode >> leastEnlargementChild: anRTEntry [
 	| minRectangleEnlargement rect leftRect rightRect leftDiff rightDiff area1 area2 |
+	"TODO you can enhance the logic of this method"
 	minRectangleEnlargement := nil.
-	rect := anRSShape encompassingRectangle.
+	rect := anRTEntry encompassingRectangle.
 	leftRect := Rectangle merging: {left rectangle. rect }.
 	rightRect := Rectangle merging: {right rectangle. rect }.
 	area1 := left rectangle area.
@@ -297,7 +280,7 @@ RTNode >> nodesWithPoint: aPoint list: aCollection [
 	(self rectangle containsPoint: aPoint)
 		ifFalse: [ ^ self ].
 	self isLeaf ifTrue:[
-		self contents addShapesIn: aCollection position: aPoint
+		self contents addEntriesIn: aCollection position: aPoint
 	] ifFalse: [
 		self childrenDo: [ :child | child nodesWithPoint: aPoint list: aCollection ]
 	]
@@ -348,25 +331,25 @@ RTNode >> rrrotationZ: z y: y x: x [
 ]
 
 { #category : 'finding/searching' }
-RTNode >> searchPath: aRSShape [
+RTNode >> searchPath: anEntry [
 	| path |
 	path := OrderedCollection new.
-	self searchPath: aRSShape rectangle: aRSShape encompassingRectangle in: path dir: nil.
+	self searchPath: anEntry rectangle: anEntry encompassingRectangle in: path dir: nil.
 	^ path
 ]
 
 { #category : 'finding/searching' }
-RTNode >> searchPath: shape rectangle: shapeRect in: path dir: aBoolean [
-	(self rectangle containsRect: shapeRect)
+RTNode >> searchPath: anRTEntry rectangle: entryRectangle in: path dir: aBoolean [
+	(self rectangle containsRect: entryRectangle)
 		ifFalse: [ ^ self ].
 	self isLeaf ifTrue: [
-		contents = shape ifTrue: [
+		contents == anRTEntry ifTrue: [
 			path addFirst: aBoolean -> self
 		] ifFalse: [  ]
 	] ifFalse: [
-		left searchPath: shape rectangle: shapeRect in: path dir: false.
+		left searchPath: anRTEntry rectangle: entryRectangle in: path dir: false.
 		path ifNotEmpty: [ path addFirst: aBoolean -> self. ^ self ].
-		right searchPath: shape rectangle: shapeRect in: path dir: true.
+		right searchPath: anRTEntry rectangle: entryRectangle in: path dir: true.
 		path ifNotEmpty: [ path addFirst: aBoolean -> self. ].
 	 ]
 ]
@@ -375,6 +358,12 @@ RTNode >> searchPath: shape rectangle: shapeRect in: path dir: aBoolean [
 RTNode >> withAllChildren [
 	| children |
 	children := OrderedCollection new.
-	self accept: (RTNodeVisitor on: [:node | children add: node ]).
+	self withAllChildrenDo: [ :node | children add: node ].
 	^ children
+]
+
+{ #category : 'enumerating' }
+RTNode >> withAllChildrenDo: aBlock [
+	aBlock value: self.
+	self childrenDo: [ :child | child withAllChildrenDo: aBlock ]
 ]

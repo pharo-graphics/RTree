@@ -2,8 +2,8 @@ Class {
 	#name : 'RTCollectionTest',
 	#superclass : 'ParametrizedTestCase',
 	#instVars : [
-		'shapeCollection',
-		'shapeCollectionClass'
+		'entryCollection',
+		'entryCollectionClass'
 	],
 	#category : 'RTree-Tests',
 	#package : 'RTree-Tests'
@@ -15,84 +15,72 @@ RTCollectionTest class >> testParameters [
 	m := ParametrizedTestMatrix new.
 	classesToConsider := RTAbstractCollection subclasses.
 	classesToConsider do: [ :cls |
-		m addCase: { (#shapeCollectionClass: -> cls) }
+		m addCase: { (#entryCollectionClass: -> cls) }
 	].
 	^ m
+]
+
+{ #category : 'accessing' }
+RTCollectionTest >> entryCollection [
+	^ entryCollection
+]
+
+{ #category : 'accessing' }
+RTCollectionTest >> entryCollection: anObject [
+
+	entryCollection := anObject
+]
+
+{ #category : 'accessing' }
+RTCollectionTest >> entryCollectionClass [
+
+	^ entryCollectionClass
+]
+
+{ #category : 'accessing' }
+RTCollectionTest >> entryCollectionClass: anObject [
+	entryCollectionClass := anObject
 ]
 
 { #category : 'running' }
 RTCollectionTest >> setUp [
 	super setUp.
-	shapeCollection := self shapeCollectionClass new
-]
-
-{ #category : 'accessing' }
-RTCollectionTest >> shapeCollection [
-	^ shapeCollection
-]
-
-{ #category : 'accessing' }
-RTCollectionTest >> shapeCollection: anObject [
-
-	shapeCollection := anObject
-]
-
-{ #category : 'accessing' }
-RTCollectionTest >> shapeCollectionClass [
-
-	^ shapeCollectionClass
-]
-
-{ #category : 'accessing' }
-RTCollectionTest >> shapeCollectionClass: anObject [
-	shapeCollectionClass := anObject
+	entryCollection := self entryCollectionClass new
 ]
 
 { #category : 'tests' }
-RTCollectionTest >> testGetShapeFromRectangle [
+RTCollectionTest >> testGetEntriesFromRectangle [
 
-	| listOfShapes |
-	shapeCollection add: (RTreeBox new
-			 size: 20 asPoint;
-			 yourself).
-	listOfShapes := shapeCollection shapesAtRectangle:
-		                (-5 asPoint corner: 5 asPoint).
-	self assert: (listOfShapes includes: shapeCollection anyOne)
-]
-
-{ #category : 'tests' }
-RTCollectionTest >> testGetShapesFromRectangle [
-
-	| listOfShapes box1 box2 box3 |
+	| listOfEntries box1 box2 box3 |
 	box1 := RTreeBox new
 		        size: 20 asPoint;
 		        position: -50 asPoint;
-		        shapeIndex: 1;
+		        entryIndex: 1;
 		        yourself.
 	box2 := RTreeBox new
 		        size: 20 asPoint;
 		        position: 50 asPoint;
-		        shapeIndex: 2;
+		        entryIndex: 2;
 		        yourself.
 	box3 := RTreeBox new
 		        size: 20 asPoint;
-		        shapeIndex: 3;
+		        entryIndex: 3;
 		        yourself.
-	shapeCollection addAll: {
+	entryCollection addAll: {
 			box1.
 			box2.
 			box3 }.
-	listOfShapes := shapeCollection shapesAtRectangle:
+	listOfEntries := entryCollection entriesAtRectangle:
 		                (5 asPoint corner: 60 asPoint).
-	self assert: listOfShapes asArray equals: {
+	self assert: listOfEntries asArray equals: {
 			box2.
 			box3 }
 ]
 
 { #category : 'tests' }
-RTCollectionTest >> testGetShapesFromRectangleInComposite [
+RTCollectionTest >> testGetEntriesFromRectangleInParent [
 
-	| listOfShapes box composite |
+	| listOfEntries box composite |
 	box := RTreeBox new
 		       size: 20 asPoint;
 		       yourself.
@@ -100,14 +88,14 @@ RTCollectionTest >> testGetShapesFromRectangleInComposite [
 		             size: 100;
 		             yourself.
 	composite add: box.
-	shapeCollection add: composite.
-	listOfShapes := shapeCollection shapesAtRectangle:
+	entryCollection add: composite.
+	listOfEntries := entryCollection entriesAtRectangle:
 		                (-5 asPoint corner: 5 asPoint).
-	self assert: listOfShapes asArray equals: { composite }
+	self assert: listOfEntries asArray equals: { composite }
 ]
 
 { #category : 'tests' }
-RTCollectionTest >> testGetShapesFromRectangleInCompositeWithChildOutside [
+RTCollectionTest >> testGetEntriesFromRectangleInParentWithChildOutside [
 
 	| listOfShapes box composite |
 	box := RTreeBox new
@@ -118,34 +106,46 @@ RTCollectionTest >> testGetShapesFromRectangleInCompositeWithChildOutside [
 		size: 100;
 		yourself.
 	composite add: box.
-	shapeCollection add: composite.
-	listOfShapes := shapeCollection shapesAtRectangle:
+	entryCollection add: composite.
+	listOfShapes := entryCollection entriesAtRectangle:
 		                (110 asPoint corner: 130 asPoint).
 	self assert: listOfShapes asArray isEmpty
 ]
 
 { #category : 'tests' }
+RTCollectionTest >> testGetEntryFromRectangle [
+
+	| listOfEntries |
+	entryCollection add: (RTreeBox new
+			 size: 20 asPoint;
+			 yourself).
+	listOfEntries := entryCollection entriesAtRectangle:
+		                (-5 asPoint corner: 5 asPoint).
+	self assert: (listOfEntries includes: entryCollection anyOne)
+]
+
+{ #category : 'tests' }
 RTCollectionTest >> testIncludes [
 	| result |
-	shapeCollection addAll: { RTreeBox new size: 10. RTreeBox new position: 50@50; size: 10 asPoint}.
-	self assert: shapeCollection size equals: 2.
-	result := shapeCollection shapesAtPoint:  -100@ -100.
+	entryCollection addAll: { RTreeBox new size: 10. RTreeBox new position: 50@50; size: 10 asPoint}.
+	self assert: entryCollection size equals: 2.
+	result := entryCollection entriesAtPoint:  -100@ -100.
 	self assert: result isEmpty.
-	result := shapeCollection shapeAtPoint: -100@ -100.
+	result := entryCollection entryAtPoint: -100@ -100 ifNone: [ nil ].
 	self assert: result isNil
 ]
 
 { #category : 'tests' }
 RTCollectionTest >> testIsEmpty [
 
-	self assert: shapeCollection isEmpty
+	self assert: entryCollection isEmpty
 ]
 
 { #category : 'tests' }
 RTCollectionTest >> testOneElement [
 
-	shapeCollection add: (RTreeBox new size: 10).
-	self deny: shapeCollection isEmpty
+	entryCollection add: (RTreeBox new size: 10).
+	self deny: entryCollection isEmpty
 ]
 
 { #category : 'tests' }

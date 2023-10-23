@@ -8,8 +8,8 @@ In roassal the position of Shapes is in the center of its encompassing rectangle
 Class {
 	#name : 'RTreeBox',
 	#superclass : 'Object',
-	#traits : 'RTWithEncompassingRectangle',
-	#classTraits : 'RTWithEncompassingRectangle classTrait',
+	#traits : 'RTEntry',
+	#classTraits : 'RTEntry classTrait',
 	#instVars : [
 		'model',
 		'position',
@@ -38,7 +38,7 @@ RTreeBox >> add: aRTreeBox [
 ]
 
 { #category : 'adding' }
-RTreeBox >> addShapesIn: aCollection position: aPoint [
+RTreeBox >> addEntriesIn: aCollection position: aPoint [
 	(self encompassingRectangle containsPoint: aPoint)
 		ifTrue: [ aCollection add: self ]
 ]

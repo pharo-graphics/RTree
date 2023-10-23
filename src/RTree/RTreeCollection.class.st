@@ -16,8 +16,9 @@ Class {
 	#instVars : [
 		'root'
 	],
-	#category : 'RTree',
-	#package : 'RTree'
+	#category : 'RTree-Collections',
+	#package : 'RTree',
+	#tag : 'Collections'
 }
 
 { #category : 'visiting' }
@@ -26,26 +27,18 @@ RTreeCollection >> accept: visitor [
 ]
 
 { #category : 'adding' }
-RTreeCollection >> add: newObject [
-	root := root addChild: newObject.
-	^ newObject
-]
-
-{ #category : 'adding' }
-RTreeCollection >> add: aShape before: otherShape [
-	"do nothing"
+RTreeCollection >> add: anRTEntry [
+	root := root addChild: anRTEntry.
+	^ anRTEntry
 ]
 
 { #category : 'private - removing' }
 RTreeCollection >> balanceRemovedPath: path [
-	"| times |
-	times := 0.
-	self haltIf: path last value contents model = 53."
+	
 	(1 to: path size -2) reverseDo: [ :index | | tree |
 		tree := (path at: index) value.
 		tree height: (tree left height max: tree right height)+1.
 		tree isBalanced ifFalse: [ | toMove brother |
-			"times := times + 1."
 			tree left height < tree right height ifTrue: [
 				toMove := tree left.
 				brother := tree right.
@@ -55,16 +48,36 @@ RTreeCollection >> balanceRemovedPath: path [
 			tree fromNode: brother.
 			toMove do: [ :shape | tree addChild: shape ].
 			"this means that when you remove a node,
-			 in order to keed it balanced
+			 in order to keep it balanced
 			maybe you can move a lot of nodes"
 		].
 	].
-	"(path last value contents model asString, ' - ', times asString, ' times') traceCr."
 ]
 
 { #category : 'enumerating' }
 RTreeCollection >> do: aBlock [
 	root do: aBlock
+]
+
+{ #category : 'finding/searching' }
+RTreeCollection >> entriesAtPoint: aPoint [
+
+	| res |
+	"very important to preserv the drawing order"
+	res := OrderedCollection new.
+	root nodesWithPoint: aPoint list: res.
+	res := res collect: [ :s | s -> s indexesFromRoot ].
+	self sortResultList: res.
+	^ res collect: [ :assoc | assoc key ]
+]
+
+{ #category : 'finding/searching' }
+RTreeCollection >> entriesAtRectangle: aRectangle [
+	| res |
+	res := OrderedCollection new.
+	root nodesIntersetcsRectangle: aRectangle list: res.
+	res sort: [:a :b | a entryIndex < b entryIndex ].
+	^ res
 ]
 
 { #category : 'accessing' }
@@ -94,13 +107,13 @@ RTreeCollection >> isTotalBalanced [
 ]
 
 { #category : 'shapes - ordering' }
-RTreeCollection >> pushBack: aShape [
-	"no need it shape contains its own order"
+RTreeCollection >> pushBack: anRTEntry [
+	"no need it, but the entry should update its entryIndex"
 ]
 
 { #category : 'shapes - ordering' }
-RTreeCollection >> pushFront: aShape [
-	"no need it aShape contains its own order with aShape shapeIndex"
+RTreeCollection >> pushFront: anRTEntry [
+	"no need it, but the entry should update its entryIndex"
 ]
 
 { #category : 'accessing' }
@@ -109,9 +122,9 @@ RTreeCollection >> rectangle [
 ]
 
 { #category : 'removing' }
-RTreeCollection >> remove: oldObject ifAbsent: anExceptionBlock [
+RTreeCollection >> remove: oldRTEntry ifAbsent: anExceptionBlock [
 	| path |
-	path := root searchPath: oldObject.
+	path := root searchPath: oldRTEntry.
 	path ifEmpty: [ ^ anExceptionBlock value ].
 	path size = 1 ifTrue: [
 		root := RTNilNode new.
@@ -129,7 +142,9 @@ RTreeCollection >> removeLastNodeInPath: path [
 	parent := path nextToLast value.
 	isRight := last key.
 	last := last value.
-	brother := isRight ifTrue: [ parent left ] ifFalse: [ parent right ].
+	brother := isRight 
+		ifTrue: [ parent left ]
+		ifFalse: [ parent right ].
 
 	parent fromNode: brother.
 	path size < 3 ifTrue: [ ^ self ].
@@ -139,29 +154,6 @@ RTreeCollection >> removeLastNodeInPath: path [
 { #category : 'accessing' }
 RTreeCollection >> root [
 	^ root
-]
-
-{ #category : 'finding/searching' }
-RTreeCollection >> shapesAtPoint: aPoint [
-
-	| res |
-	"very important to preserv the drawing order"
-	res := OrderedCollection new.
-	root nodesWithPoint: aPoint list: res.
-	res := res collect: [ :s | s -> s indexesFromRoot ].
-
-	self sortResultList: res.
-
-	^ res collect: [ :assoc | assoc key ]
-]
-
-{ #category : 'finding/searching' }
-RTreeCollection >> shapesAtRectangle: aRectangle [
-	| res |
-	res := OrderedCollection new.
-	root nodesIntersetcsRectangle: aRectangle list: res.
-	res sort: [:a :b | a shapeIndex < b shapeIndex ].
-	^ res
 ]
 
 { #category : 'public' }
@@ -186,17 +178,18 @@ RTreeCollection >> shouldSwap: anAssociation and: anAssociation2 [
 
 { #category : 'public' }
 RTreeCollection >> sortResultList: aCollection [
-
-	aCollection sort: [ :a :b | 
-		
-		self shouldSwap: a and: b
-		 ]
+	aCollection sort: [ :a :b | self shouldSwap: a and: b ]
 ]
 
-{ #category : 'finding/searching' }
-RTreeCollection >> updateShape: aShape [
+{ #category : 'update' }
+RTreeCollection >> updateEntry: anRTEntry [
 
-	self remove: aShape.
-	aShape resetEncompassingRectangle.
-	self add: aShape
+	self remove: anRTEntry.
+	anRTEntry resetEncompassingRectangle.
+	self add: anRTEntry
+]
+
+{ #category : 'update' }
+RTreeCollection >> updateEntry: anRTEntry before: anotherRTEntry [
+	"do not needed because there is no order in this tree"
 ]

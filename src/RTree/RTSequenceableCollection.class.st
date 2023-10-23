@@ -6,64 +6,65 @@ Class {
 	#name : 'RTSequenceableCollection',
 	#superclass : 'RTAbstractCollection',
 	#instVars : [
-		'group'
+		'entries'
 	],
-	#category : 'RTree',
-	#package : 'RTree'
+	#category : 'RTree-Collections',
+	#package : 'RTree',
+	#tag : 'Collections'
 }
 
 { #category : 'adding' }
-RTSequenceableCollection >> add: newObject [
-	group add: newObject
-]
-
-{ #category : 'adding' }
-RTSequenceableCollection >> add: aShape before: otherShape [
-	group remove: aShape; add: aShape before: otherShape
+RTSequenceableCollection >> add: anRTEntry [
+	entries add: anRTEntry
 ]
 
 { #category : 'enumerating' }
 RTSequenceableCollection >> do: aBlock [
-	group do: aBlock
-]
-
-{ #category : 'initialization' }
-RTSequenceableCollection >> initialize [
-	super initialize.
-	group := OrderedCollection new
-]
-
-{ #category : 'shapes - ordering' }
-RTSequenceableCollection >> pushBack: aShape [
-	group remove: aShape; addFirst: aShape.
-]
-
-{ #category : 'shapes - ordering' }
-RTSequenceableCollection >> pushFront: aShape [
-	group remove: aShape; add: aShape
-]
-
-{ #category : 'removing' }
-RTSequenceableCollection >> remove: oldObject ifAbsent: anExceptionBlock [
-	group remove: oldObject ifAbsent: anExceptionBlock
+	entries do: aBlock
 ]
 
 { #category : 'finding/searching' }
-RTSequenceableCollection >> shapesAtPoint: position [
+RTSequenceableCollection >> entriesAtPoint: position [
 	| result |
 	result := OrderedCollection new.
-	group reverseDo: [ :shape |
-		shape addShapesIn: result position: position.
+	entries reverseDo: [ :entry |
+		entry addEntriesIn: result position: position.
 	].
 	^ result
 ]
 
 { #category : 'finding/searching' }
-RTSequenceableCollection >> shapesAtRectangle: aRectangle [
-	^ group select: [ :each | each encompassingRectangle intersects: aRectangle ]
+RTSequenceableCollection >> entriesAtRectangle: aRectangle [
+	^ entries select: [ :each | each encompassingRectangle intersects: aRectangle ]
 ]
 
-{ #category : 'finding/searching' }
-RTSequenceableCollection >> updateShape: aShape [
-	aShape resetEncompassingRectangle
+{ #category : 'initialization' }
+RTSequenceableCollection >> initialize [
+	super initialize.
+	entries := OrderedCollection new
+]
+
+{ #category : 'shapes - ordering' }
+RTSequenceableCollection >> pushBack: anRTEntry [
+	entries remove: anRTEntry; addFirst: anRTEntry.
+]
+
+{ #category : 'shapes - ordering' }
+RTSequenceableCollection >> pushFront: anRTEntry [
+	entries remove: anRTEntry; add: anRTEntry
+]
+
+{ #category : 'removing' }
+RTSequenceableCollection >> remove: anRTEntry ifAbsent: anExceptionBlock [
+	entries remove: anRTEntry ifAbsent: anExceptionBlock
+]
+
+{ #category : 'update' }
+RTSequenceableCollection >> updateEntry: anRTEntry [
+	anRTEntry resetEncompassingRectangle
+]
+
+{ #category : 'update' }
+RTSequenceableCollection >> updateEntry: anRTEntry before: anotherRTEntry [
+	entries remove: anRTEntry; add: anRTEntry before: anotherRTEntry
 ]

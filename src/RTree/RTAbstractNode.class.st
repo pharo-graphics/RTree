@@ -4,8 +4,9 @@ based on nil pattern
 Class {
 	#name : 'RTAbstractNode',
 	#superclass : 'Object',
-	#category : 'RTree',
-	#package : 'RTree'
+	#category : 'RTree-Nodes',
+	#package : 'RTree',
+	#tag : 'Nodes'
 }
 
 { #category : 'visiting' }
@@ -13,7 +14,7 @@ RTAbstractNode >> accept: visitor [
 ]
 
 { #category : 'adding' }
-RTAbstractNode >> addChild: newObject [
+RTAbstractNode >> addChild: anRTEntry [
 	^ self subclassResponsibility
 ]
 

@@ -10,11 +10,26 @@ Class {
 
 { #category : 'accessing' }
 RTreeTest >> bigTree [
-	^ self createTreeWith: 100
+	^ self newTreeWith: 100
+]
+
+{ #category : 'tests' }
+RTreeTest >> emptyTree [
+	^ RTreeCollection new
 ]
 
 { #category : 'accessing' }
-RTreeTest >> createTreeWith: aNumber [
+RTreeTest >> leafs [
+	^ tree root withAllChildren select: [ :node | node isLeaf ]
+]
+
+{ #category : 'accessing' }
+RTreeTest >> newTree [
+	^ self newTreeWith: 10
+]
+
+{ #category : 'accessing' }
+RTreeTest >> newTreeWith: aNumber [
 	| random |
 	"do not modify this method"
 	tree := self emptyTree.
@@ -29,16 +44,6 @@ RTreeTest >> createTreeWith: aNumber [
 	].
 
 	^ tree
-]
-
-{ #category : 'tests' }
-RTreeTest >> emptyTree [
-	^ RTreeCollection new
-]
-
-{ #category : 'accessing' }
-RTreeTest >> leafs [
-	^ tree root withAllChildren select: [ :node | node isLeaf ]
 ]
 
 { #category : 'running' }
@@ -125,9 +130,9 @@ RTreeTest >> testOneElementContains [
 	| result |
 	tree add: (RTreeBox new size: 10).
 
-	result := tree shapesAtPoint: 0@0.
+	result := tree entriesAtPoint: 0@0.
 	self assert: result notEmpty.
-	result := tree shapesAtRectangle: (0@0 corner: 100@100).
+	result := tree entriesAtRectangle: (0@0 corner: 100@100).
 	self assert: result notEmpty
 ]
 
@@ -142,7 +147,7 @@ RTreeTest >> testOneElementRectangle [
 { #category : 'tests - removing' }
 RTreeTest >> testRemoveLeaf1 [
 	| leafs size shapes shape |
-	tree := self tree.
+	tree := self newTree.
 
 	size := tree size.
 	leafs := self leafs.
@@ -153,7 +158,7 @@ RTreeTest >> testRemoveLeaf1 [
 	tree remove: shape.
 	self assert: tree isBalanced.
 	self assert: size - 1 equals: tree size.
-	self assert: (tree shapesAtPoint: (shape position)) isEmpty.
+	self assert: (tree entriesAtPoint: (shape position)) isEmpty.
 
 	tree remove: (shapes detect: [ :s | s model = 10]).
 	self assert: tree isBalanced.
@@ -163,7 +168,7 @@ RTreeTest >> testRemoveLeaf1 [
 { #category : 'tests - removing' }
 RTreeTest >> testRemoveLeaf2 [
 	| leafs shapes shape size |
-	tree := self tree.
+	tree := self newTree.
 	size := tree size.
 	leafs := self leafs.
 	shapes := leafs collect: [ :each | each contents ].
@@ -235,7 +240,7 @@ RTreeTest >> testSearchPath2 [
 { #category : 'tests' }
 RTreeTest >> testSearchPath3 [
 	| nodes path shapes |
-	tree := self tree.
+	tree := self newTree.
 	"tree inspect"
 	nodes := self leafs.
 	shapes := nodes collect: [ :node | node contents ].
@@ -250,36 +255,19 @@ RTreeTest >> testSearchPath3 [
 ]
 
 { #category : 'tests' }
-RTreeTest >> testSeriousBalance [
-	| random |
-	random := Random new.
-	random seed: 777.
-	1 to: 100 do: [ :each | | box |
-		box := RTreeBox new.
-		box size: 10.
-		box model: each.
-		box position: (random next @ random next) * 1000.
-
-		tree add: box.
-		self assert: tree height equals: tree root computeHeight.
-		self assert: tree isTotalBalanced.
-	]
-]
-
-{ #category : 'tests' }
 RTreeTest >> testSortResultArray [
 
-	| shapes a b c d e |
-	shapes := { 
+	| entries a b c d e |
+	entries := { 
 		          ((a := RTreeBox model: 'a') -> { 1. 1 }).
 		          ((b := RTreeBox model: 'b') -> { 1. 2 }).
 		          ((c := RTreeBox model: 'c') -> { 3. 1 }).
 		          ((d := RTreeBox model: 'd') -> { 1. 4 }).
 		          ((e := RTreeBox model: 'e') -> { 1. 4. 1 }) }.
 	tree := RTreeCollection new.
-	tree sortResultList: shapes.
+	tree sortResultList: entries.
 
-	self assert: (shapes collect: #key) equals: { 
+	self assert: (entries collect: #key) equals: { 
 			c.
 			e.
 			d.
@@ -304,29 +292,46 @@ RTreeTest >> testThreeElements [
 { #category : 'tests' }
 RTreeTest >> testThreeElementsContains [
 	| b1 b2 b3 result |
-	b1 := RTreeBox new size: 10; shapeIndex: 2.
-	b2 := RTreeBox new size: 30; position: 30@30; shapeIndex: 1.
-	b3 := RTreeBox new size: 10; position: -10@ -10; shapeIndex: 3.
+	b1 := RTreeBox new size: 10; entryIndex: 2.
+	b2 := RTreeBox new size: 30; position: 30@30; entryIndex: 1.
+	b3 := RTreeBox new size: 10; position: -10@ -10; entryIndex: 3.
 	tree addAll: { b1. b2. b3 }.
 
-	result := tree shapesAtPoint: 0@0.
+	result := tree entriesAtPoint: 0@0.
 	self assert: result first equals: b1.
 
-	result := tree shapesAtPoint: 30@30.
+	result := tree entriesAtPoint: 30@30.
 	self assert: result first equals: b2.
 
-	result := tree shapesAtPoint: -10@ -10.
+	result := tree entriesAtPoint: -10@ -10.
 	self assert: result first equals: b3.
 
-	result := tree shapesAtRectangle: (0@0 corner: 10@10).
+	result := tree entriesAtRectangle: (0@0 corner: 10@10).
 	self assert: result first equals: b1.
 
-	result := tree shapesAtRectangle: (0@0 corner: 40@40).
+	result := tree entriesAtRectangle: (0@0 corner: 40@40).
 	self assert: result size equals: 2.
 
-	result := tree shapesAtRectangle: (-20@ -20 corner: 40@40).
+	result := tree entriesAtRectangle: (-20@ -20 corner: 40@40).
 	self assert: result size equals: 3.
 	self assert: result asArray equals: { b2. b1. b3 }.
+]
+
+{ #category : 'tests' }
+RTreeTest >> testTotalBalance [
+	| random |
+	random := Random new.
+	random seed: 777.
+	1 to: 100 do: [ :each | | box |
+		box := RTreeBox new.
+		box size: 10.
+		box model: each.
+		box position: (random next @ random next) * 1000.
+
+		tree add: box.
+		self assert: tree height equals: tree root computeHeight.
+		self assert: tree isTotalBalanced.
+	]
 ]
 
 { #category : 'tests - adding' }
@@ -345,31 +350,31 @@ RTreeTest >> testTwoElements [
 { #category : 'tests' }
 RTreeTest >> testTwoElementsContains [
 	| b1 b2 result |
-	b1 := RTreeBox new size: 10; shapeIndex: 1.
-	b2 := RTreeBox new size: 30; position: 25@ 25; shapeIndex: 2.
+	b1 := RTreeBox new size: 10; entryIndex: 1.
+	b2 := RTreeBox new size: 30; position: 25@ 25; entryIndex: 2.
 	
 	tree addAll: { b1. b2 }.
-	result := tree shapesAtPoint: 0@0.
+	result := tree entriesAtPoint: 0@0.
 	self assert: result first equals: b1.
 
-	result := tree shapesAtPoint: 30@30.
+	result := tree entriesAtPoint: 30@30.
 	self assert: result first equals: b2.
 
-	result := tree shapesAtRectangle: (0@0 corner: 10@10).
+	result := tree entriesAtRectangle: (0@0 corner: 10@10).
 	self assert: result first equals: b1.
 
-	result := tree shapesAtRectangle: (0@0 corner: 30@30).
+	result := tree entriesAtRectangle: (0@0 corner: 30@30).
 	self assert: result size equals: 2
 ]
 
 { #category : 'tests - adding' }
 RTreeTest >> testTwoElementsRectangle [
-	| b1 b2 group |
+	| b1 b2 entries |
 	b1 := RTreeBox new size: 10.
 	b2 := RTreeBox new size: 30; position: 30@30.
-	group := OrderedCollection new.
-	group addAll: { b1. b2 }.
-	tree addAll: group.
+	entries := OrderedCollection new.
+	entries addAll: { b1. b2 }.
+	tree addAll: entries.
 	self assert: tree rectangle equals: (Rectangle merging: {b1 encompassingRectangle. b2 encompassingRectangle})
 ]
 
@@ -386,7 +391,7 @@ RTreeTest >> testUpdateExtentShouldUpdateTreeRectangle [
 	self assert: collection root rectangle equals: box encompassingRectangle.
 	
 	box extent: newExtent.
-	collection updateShape: box.
+	collection updateEntry: box.
 	
 	self assert: box encompassingRectangle extent equals: newExtent.
 	self assert: collection root rectangle equals: box encompassingRectangle.
@@ -402,18 +407,13 @@ RTreeTest >> testZeroElement [
 { #category : 'tests' }
 RTreeTest >> testZeroElementContains [
 	| result |
-	result := tree shapesAtPoint: 0@0.
+	result := tree entriesAtPoint: 0@0.
 	self assert: result isEmpty.
-	result := tree shapesAtRectangle: (0@0 corner: 100@100).
+	result := tree entriesAtRectangle: (0@0 corner: 100@100).
 	self assert: result isEmpty
 ]
 
 { #category : 'tests' }
 RTreeTest >> testZeroElementRectangle [
 	self assert: tree rectangle equals: (0@0 corner: 0@0)
-]
-
-{ #category : 'accessing' }
-RTreeTest >> tree [
-	^ self createTreeWith: 10
 ]

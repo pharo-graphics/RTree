@@ -2,26 +2,37 @@
 I describe graphic elements with an ecompassing rectangle in its space
 "
 Trait {
-	#name : 'RTWithEncompassingRectangle',
+	#name : 'RTEntry',
 	#instVars : [
-		'shapeIndex'
+		'entryIndex'
 	],
-	#category : 'RTree',
-	#package : 'RTree'
+	#category : 'RTree-Traits',
+	#package : 'RTree',
+	#tag : 'Traits'
 }
 
 { #category : 'adding' }
-RTWithEncompassingRectangle >> addShapesIn: aCollection position: aPoint [
+RTEntry >> addEntriesIn: aCollection position: aPoint [
 	self explicitRequirement
 ]
 
 { #category : 'accessing' }
-RTWithEncompassingRectangle >> encompassingRectangle [
+RTEntry >> encompassingRectangle [
 	^ self explicitRequirement
 ]
 
+{ #category : 'private' }
+RTEntry >> entryIndex [
+	^ entryIndex
+]
+
+{ #category : 'private' }
+RTEntry >> entryIndex: aNumber [
+	entryIndex := aNumber
+]
+
 { #category : 'accessing - computed' }
-RTWithEncompassingRectangle >> indexesFromRoot [
+RTEntry >> indexesFromRoot [
 	"the first element is root element, second its root's children"
 	| collection |
 	collection := OrderedCollection new.
@@ -30,31 +41,21 @@ RTWithEncompassingRectangle >> indexesFromRoot [
 ]
 
 { #category : 'accessing - computed' }
-RTWithEncompassingRectangle >> indexesFromRootIn: aCollection [
+RTEntry >> indexesFromRootIn: aCollection [
 	| aParent |
 	aParent := self parent.
 	aParent ifNil: [ ^ self ].
 
 	aParent indexesFromRootIn: aCollection.
-	aCollection add: self shapeIndex
+	aCollection add: self entryIndex
 ]
 
 { #category : 'accessing' }
-RTWithEncompassingRectangle >> parent [
+RTEntry >> parent [
 	^ self explicitRequirement
 ]
 
 { #category : 'rectangle' }
-RTWithEncompassingRectangle >> resetEncompassingRectangle [
+RTEntry >> resetEncompassingRectangle [
 	^ self explicitRequirement
-]
-
-{ #category : 'private' }
-RTWithEncompassingRectangle >> shapeIndex [
-	^ shapeIndex
-]
-
-{ #category : 'private' }
-RTWithEncompassingRectangle >> shapeIndex: aNumber [
-	shapeIndex := aNumber
 ]
