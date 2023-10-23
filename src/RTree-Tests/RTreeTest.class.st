@@ -321,10 +321,10 @@ RTreeTest >> testThreeElementsContains [
 	result := tree shapesAtRectangle: (0@0 corner: 10@10).
 	self assert: result first equals: b1.
 
-	result := tree shapesAtRectangle: (0@0 corner: 30@30).
+	result := tree shapesAtRectangle: (0@0 corner: 40@40).
 	self assert: result size equals: 2.
 
-	result := tree shapesAtRectangle: (-20@ -20 corner: 30@30).
+	result := tree shapesAtRectangle: (-20@ -20 corner: 40@40).
 	self assert: result size equals: 3.
 	self assert: result asArray equals: { b2. b1. b3 }.
 ]
