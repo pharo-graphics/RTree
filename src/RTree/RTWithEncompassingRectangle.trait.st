@@ -1,5 +1,11 @@
+"
+I describe graphic elements with an ecompassing rectangle in its space
+"
 Trait {
 	#name : 'RTWithEncompassingRectangle',
+	#instVars : [
+		'shapeIndex'
+	],
 	#category : 'RTree',
 	#package : 'RTree'
 }
@@ -9,12 +15,12 @@ RTWithEncompassingRectangle >> addShapesIn: aCollection position: aPoint [
 	self explicitRequirement
 ]
 
-{ #category : 'adding' }
+{ #category : 'accessing' }
 RTWithEncompassingRectangle >> encompassingRectangle [
 	^ self explicitRequirement
 ]
 
-{ #category : 'adding' }
+{ #category : 'accessing - computed' }
 RTWithEncompassingRectangle >> indexesFromRoot [
 	"the first element is root element, second its root's children"
 	| collection |
@@ -23,7 +29,7 @@ RTWithEncompassingRectangle >> indexesFromRoot [
 	^ collection
 ]
 
-{ #category : 'adding' }
+{ #category : 'accessing - computed' }
 RTWithEncompassingRectangle >> indexesFromRootIn: aCollection [
 	| aParent |
 	aParent := self parent.
@@ -33,17 +39,22 @@ RTWithEncompassingRectangle >> indexesFromRootIn: aCollection [
 	aCollection add: self shapeIndex
 ]
 
-{ #category : 'adding' }
+{ #category : 'accessing' }
 RTWithEncompassingRectangle >> parent [
 	^ self explicitRequirement
 ]
 
-{ #category : 'adding' }
+{ #category : 'rectangle' }
 RTWithEncompassingRectangle >> resetEncompassingRectangle [
 	^ self explicitRequirement
 ]
 
-{ #category : 'adding' }
+{ #category : 'private' }
 RTWithEncompassingRectangle >> shapeIndex [
-	^ self explicitRequirement
+	^ shapeIndex
+]
+
+{ #category : 'private' }
+RTWithEncompassingRectangle >> shapeIndex: aNumber [
+	shapeIndex := aNumber
 ]

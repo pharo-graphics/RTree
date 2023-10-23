@@ -1,5 +1,9 @@
 "
-Dummy class for tests
+Dummy class for tests.
+RTreeBox is similar to RSShape or BlElement,
+RTreeBox is a graphic component with bounds or encompassing rectangle
+The position of the RTreeBox is top left of its encompassing rectangle.
+In roassal the position of Shapes is in the center of its encompassing rectangle.
 "
 Class {
 	#name : 'RTreeBox',
@@ -10,7 +14,9 @@ Class {
 		'model',
 		'position',
 		'extent',
-		'rectangle'
+		'rectangle',
+		'parent',
+		'children'
 	],
 	#category : 'RTree-Tests',
 	#package : 'RTree-Tests'
@@ -22,6 +28,19 @@ RTreeBox class >> model: anObject [
 		model: anObject;
 		yourself 
 	
+]
+
+{ #category : 'adding' }
+RTreeBox >> add: aRTreeBox [
+	children ifNil: [ children := OrderedCollection new ].
+	children add: aRTreeBox.
+	aRTreeBox parent: self
+]
+
+{ #category : 'adding' }
+RTreeBox >> addShapesIn: aCollection position: aPoint [
+	(self encompassingRectangle containsPoint: aPoint)
+		ifTrue: [ aCollection add: self ]
 ]
 
 { #category : 'accessing' }
@@ -53,6 +72,16 @@ RTreeBox >> model: anObject [
 ]
 
 { #category : 'accessing' }
+RTreeBox >> parent [
+	^ parent
+]
+
+{ #category : 'accessing' }
+RTreeBox >> parent: aRTreeBox [
+	parent := aRTreeBox
+]
+
+{ #category : 'accessing' }
 RTreeBox >> position [
 	^ position
 ]
@@ -62,7 +91,7 @@ RTreeBox >> position: aPoint [
 	position := aPoint
 ]
 
-{ #category : 'adding' }
+{ #category : 'rectangle' }
 RTreeBox >> resetEncompassingRectangle [
 	rectangle := nil
 ]
