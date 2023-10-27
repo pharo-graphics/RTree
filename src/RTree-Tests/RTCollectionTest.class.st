@@ -152,7 +152,7 @@ RTCollectionTest >> testOneElement [
 RTCollectionTest >> testSortResultArray [
 
 	| shapes a b c d tree e |
-	shapes := { 
+	shapes := {
 		          ((a := RTreeBox model: 'a') -> { 1. 1 }).
 		          ((b := RTreeBox model: 'b') -> { 1. 2 }).
 		          ((c := RTreeBox model: 'c') -> { 3. 1 }).
@@ -161,7 +161,7 @@ RTCollectionTest >> testSortResultArray [
 	tree := RTreeCollection new.
 	tree sortResultList: shapes.
 
-	self assert: (shapes collect: #key) equals: { 
+	self assert: (shapes collect: #key) equals: {
 			c.
 			e.
 			d.

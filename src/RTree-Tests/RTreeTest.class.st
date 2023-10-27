@@ -258,7 +258,7 @@ RTreeTest >> testSearchPath3 [
 RTreeTest >> testSortResultArray [
 
 	| entries a b c d e |
-	entries := { 
+	entries := {
 		          ((a := RTreeBox model: 'a') -> { 1. 1 }).
 		          ((b := RTreeBox model: 'b') -> { 1. 2 }).
 		          ((c := RTreeBox model: 'c') -> { 3. 1 }).
@@ -267,7 +267,7 @@ RTreeTest >> testSortResultArray [
 	tree := RTreeCollection new.
 	tree sortResultList: entries.
 
-	self assert: (entries collect: #key) equals: { 
+	self assert: (entries collect: #key) equals: {
 			c.
 			e.
 			d.
@@ -314,7 +314,7 @@ RTreeTest >> testThreeElementsContains [
 
 	result := tree entriesAtRectangle: (-20@ -20 corner: 40@40).
 	self assert: result size equals: 3.
-	self assert: result asArray equals: { b2. b1. b3 }.
+	self assert: result asArray equals: { b2. b1. b3 }
 ]
 
 { #category : 'tests' }
@@ -352,7 +352,7 @@ RTreeTest >> testTwoElementsContains [
 	| b1 b2 result |
 	b1 := RTreeBox new size: 10; entryIndex: 1.
 	b2 := RTreeBox new size: 30; position: 25@ 25; entryIndex: 2.
-	
+
 	tree addAll: { b1. b2 }.
 	result := tree entriesAtPoint: 0@0.
 	self assert: result first equals: b1.
@@ -387,14 +387,14 @@ RTreeTest >> testUpdateExtentShouldUpdateTreeRectangle [
 	box := RTreeBox new.
 	box extent: oldExtent.
 	collection add: box.
-	
+
 	self assert: collection root rectangle equals: box encompassingRectangle.
-	
+
 	box extent: newExtent.
 	collection updateEntry: box.
-	
+
 	self assert: box encompassingRectangle extent equals: newExtent.
-	self assert: collection root rectangle equals: box encompassingRectangle.
+	self assert: collection root rectangle equals: box encompassingRectangle
 ]
 
 { #category : 'tests' }

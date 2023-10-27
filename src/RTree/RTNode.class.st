@@ -66,7 +66,7 @@ RTNode >> balanceZ: z y: y x: x [
 		^ self llrotationZ: c y: b x: a ].
 	(y key not and: [ x key ]) ifTrue: [
 		^ self lrrotationZ: c y: b x: a ].
-	^ self rlrotationZ: c y: b x: a.
+	^ self rlrotationZ: c y: b x: a
 ]
 
 { #category : 'accessing' }
@@ -74,7 +74,6 @@ RTNode >> children [
 	^ self isLeaf
 		ifTrue: [ #() ]
 		ifFalse: [ { left. right } ]
-
 ]
 
 { #category : 'enumerating' }
@@ -146,7 +145,7 @@ RTNode >> ensureBalancePath: aCollection [
 				self balanceZ: z y: y x: x.
 			]
 		]
-	].
+	]
 ]
 
 { #category : 'private' }

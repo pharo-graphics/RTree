@@ -26,8 +26,7 @@ Class {
 RTreeBox class >> model: anObject [
 	^ self new
 		model: anObject;
-		yourself 
-	
+		yourself
 ]
 
 { #category : 'adding' }

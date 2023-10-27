@@ -34,7 +34,7 @@ RTreeCollection >> add: anRTEntry [
 
 { #category : 'private - removing' }
 RTreeCollection >> balanceRemovedPath: path [
-	
+
 	(1 to: path size -2) reverseDo: [ :index | | tree |
 		tree := (path at: index) value.
 		tree height: (tree left height max: tree right height)+1.
@@ -51,7 +51,7 @@ RTreeCollection >> balanceRemovedPath: path [
 			 in order to keep it balanced
 			maybe you can move a lot of nodes"
 		].
-	].
+	]
 ]
 
 { #category : 'enumerating' }
@@ -142,7 +142,7 @@ RTreeCollection >> removeLastNodeInPath: path [
 	parent := path nextToLast value.
 	isRight := last key.
 	last := last value.
-	brother := isRight 
+	brother := isRight
 		ifTrue: [ parent left ]
 		ifFalse: [ parent right ].
 
@@ -157,8 +157,8 @@ RTreeCollection >> root [
 ]
 
 { #category : 'public' }
-RTreeCollection >> shouldSwap: anAssociation and: anAssociation2 [ 
-	
+RTreeCollection >> shouldSwap: anAssociation and: anAssociation2 [
+
 	| v1 v2 size|
 	v1 := anAssociation value.
 	v2 := anAssociation2 value.
@@ -167,13 +167,12 @@ RTreeCollection >> shouldSwap: anAssociation and: anAssociation2 [
 	1 to: size do: [ :i| |index1 index2|
 		index1 := v1 at: i.
 		index2 := v2 at: i.
-		index1 = index2 ifFalse: [ 
+		index1 = index2 ifFalse: [
 			^ index1 > index2 ]
 	].
-	^ v1 size = v2 size 
+	^ v1 size = v2 size
 		ifTrue: [ false ]
 		ifFalse: [ v1 size > v2 size  ]
-
 ]
 
 { #category : 'public' }

@@ -18,13 +18,13 @@ Class {
 { #category : 'examples' }
 RTAbstractCollection class >> exampleList [
 	"in the inspector add and remove shapes"
-	^ StInspectorPresenter openOn: RTSequenceableCollection new.
+	^ StInspectorPresenter openOn: RTSequenceableCollection new
 ]
 
 { #category : 'examples' }
 RTAbstractCollection class >> exampleRTree [
 	"this has normal method collections with some new more"
-	^ StInspectorPresenter openOn: RTreeCollection new.
+	^ StInspectorPresenter openOn: RTreeCollection new
 ]
 
 { #category : 'adding' }

@@ -46,7 +46,7 @@ RTSequenceableCollection >> initialize [
 
 { #category : 'shapes - ordering' }
 RTSequenceableCollection >> pushBack: anRTEntry [
-	entries remove: anRTEntry; addFirst: anRTEntry.
+	entries remove: anRTEntry; addFirst: anRTEntry
 ]
 
 { #category : 'shapes - ordering' }
