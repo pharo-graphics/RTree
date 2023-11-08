@@ -285,8 +285,8 @@ RTreeTest >> testThreeElements [
 	self assert: tree notEmpty.
 	self assert: tree size equals: 3.
 	self assert: tree root contents equals: nil.
-	self assert: tree root left notNil.
-	self assert: tree root right notNil
+	self assert: tree root left isNotNil.
+	self assert: tree root right isNotNil
 ]
 
 { #category : 'tests' }
