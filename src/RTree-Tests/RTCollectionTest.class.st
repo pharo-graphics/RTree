@@ -53,25 +53,24 @@ RTCollectionTest >> testGetEntriesFromRectangle [
 
 	| listOfEntries box1 box2 box3 |
 	box1 := RTreeBox new
-		        size: 20 asPoint;
-		        position: -50 asPoint;
+		        size: 20 @ 20;
+		        position: -50 @ -50;
 		        entryIndex: 1;
 		        yourself.
 	box2 := RTreeBox new
-		        size: 20 asPoint;
-		        position: 50 asPoint;
+		        size: 20 @ 20;
+		        position: 50 @ 50;
 		        entryIndex: 2;
 		        yourself.
 	box3 := RTreeBox new
-		        size: 20 asPoint;
+		        size: 20 @ 20;
 		        entryIndex: 3;
 		        yourself.
 	entryCollection addAll: {
 			box1.
 			box2.
 			box3 }.
-	listOfEntries := entryCollection entriesAtRectangle:
-		                (5 asPoint corner: 60 asPoint).
+	listOfEntries := entryCollection entriesAtRectangle: (5 @ 5 corner: 60 @ 60).
 	self assert: listOfEntries asArray equals: {
 			box2.
 			box3 }
@@ -82,15 +81,14 @@ RTCollectionTest >> testGetEntriesFromRectangleInParent [
 
 	| listOfEntries box composite |
 	box := RTreeBox new
-		       size: 20 asPoint;
+		       size: 20 @ 20;
 		       yourself.
 	composite := RTreeBox new
 		             size: 100;
 		             yourself.
 	composite add: box.
 	entryCollection add: composite.
-	listOfEntries := entryCollection entriesAtRectangle:
-		                (-5 asPoint corner: 5 asPoint).
+	listOfEntries := entryCollection entriesAtRectangle: (-5 @ -5 corner: 5 @ 5).
 	self assert: listOfEntries asArray equals: { composite }
 ]
 
@@ -99,16 +97,15 @@ RTCollectionTest >> testGetEntriesFromRectangleInParentWithChildOutside [
 
 	| listOfShapes box composite |
 	box := RTreeBox new
-		size: 20 asPoint;
-		position: 120 asPoint;
-		yourself.
+		       size: 20 @ 20;
+		       position: 120 @ 120;
+		       yourself.
 	composite := RTreeBox new
-		size: 100;
-		yourself.
+		             size: 100;
+		             yourself.
 	composite add: box.
 	entryCollection add: composite.
-	listOfShapes := entryCollection entriesAtRectangle:
-		                (110 asPoint corner: 130 asPoint).
+	listOfShapes := entryCollection entriesAtRectangle: (110 @ 110 corner: 130 @ 130).
 	self assert: listOfShapes asArray isEmpty
 ]
 
@@ -117,21 +114,25 @@ RTCollectionTest >> testGetEntryFromRectangle [
 
 	| listOfEntries |
 	entryCollection add: (RTreeBox new
-			 size: 20 asPoint;
+			 size: 20 @ 20;
 			 yourself).
-	listOfEntries := entryCollection entriesAtRectangle:
-		                (-5 asPoint corner: 5 asPoint).
+	listOfEntries := entryCollection entriesAtRectangle: (-5 @ -5 corner: 5 @ 5).
 	self assert: (listOfEntries includes: entryCollection anyOne)
 ]
 
 { #category : 'tests' }
 RTCollectionTest >> testIncludes [
+
 	| result |
-	entryCollection addAll: { RTreeBox new size: 10. RTreeBox new position: 50@50; size: 10 asPoint}.
+	entryCollection addAll: {
+			(RTreeBox new size: 10).
+			(RTreeBox new
+				 position: 50 @ 50;
+				 size: 10 @ 10) }.
 	self assert: entryCollection size equals: 2.
-	result := entryCollection entriesAtPoint:  -100@ -100.
+	result := entryCollection entriesAtPoint: -100 @ -100.
 	self assert: result isEmpty.
-	result := entryCollection entryAtPoint: -100@ -100 ifNone: [ nil ].
+	result := entryCollection entryAtPoint: -100 @ -100 ifNone: [ nil ].
 	self assert: result isNil
 ]
 

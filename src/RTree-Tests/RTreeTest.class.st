@@ -76,11 +76,13 @@ RTreeTest >> testAllChildren [
 
 { #category : 'tests' }
 RTreeTest >> testBalanced [
-	1 to: 10 do: [ :each | | box |
-		box := RTreeBox new.
-		box size: 10.
-		box position: each * 10 asPoint.
-		tree add: box. ].
+
+	1 to: 10 do: [ :each |
+			| box |
+			box := RTreeBox new.
+			box size: 10.
+			box position: each * (10 @ 10).
+			tree add: box ].
 	self assert: tree notEmpty.
 	self assert: tree size equals: 10.
 	self assert: tree isBalanced
@@ -285,8 +287,8 @@ RTreeTest >> testThreeElements [
 	self assert: tree notEmpty.
 	self assert: tree size equals: 3.
 	self assert: tree root contents equals: nil.
-	self assert: tree root left isNotNil.
-	self assert: tree root right isNotNil
+	self assert: tree root left notNil.
+	self assert: tree root right notNil
 ]
 
 { #category : 'tests' }
