@@ -54,8 +54,9 @@ RTreeBox >> extent: aPoint [
 
 { #category : 'initialization' }
 RTreeBox >> initialize [
+
 	super initialize.
-	position := extent := 0 asPoint
+	position := extent := 0 @ 0
 ]
 
 { #category : 'accessing' }
